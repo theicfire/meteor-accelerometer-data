@@ -1,8 +1,11 @@
 <head>
-  <title>Todo List</title>
+    <title>Greatness</title>
 </head>
 
 <body>
+</body>
+
+<template name="TodoList">
 <header>
   <h1>Todo List</h1>
 
@@ -26,7 +29,7 @@
       {{/each}}
     </ul>
   </div>
-</body>
+</template>
 
 <template name="task">
   <li class="{{#if checked}}checked{{/if}}">
@@ -38,3 +41,7 @@
   </li>
 </template>
 
+
+<template name="Vis">
+  <div id="circles"></div>
+</template>

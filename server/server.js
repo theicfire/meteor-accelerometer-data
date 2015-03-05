@@ -17,3 +17,15 @@ Router.route('/task/:task', {where: 'server'})
         });
     this.response.end('post request ' + this.params.task + '\n');
   });
+
+Router.route('/accels/:x/:y/:z', {where: 'server'})
+  .post(function () {
+      var accel = {
+          x: this.params.x,
+          y: this.params.y,
+          z: this.params.z,
+          createdAt: new Date() // current time
+      };
+      Accels.insert(accel);
+      this.response.end('Received x of ' + JSON.stringify(accel) + '\n');
+  });

@@ -1,21 +1,12 @@
-
 Router.route('/graph', function () {
     //Template.Graph.helpers({
       //accels: function () {
           //return Accels.find();
       //}
     //});
-
-
     //var parseDate = d3.time.format("%d-%b-%y").parse;
 
-    //console.log(data);
-    //graphData(data);
-
     this.render('Graph');
-//var one = {'x': '582.13', 'y': 5, 'z': '6', createdAt: parseDate('1-May-12')};
-//var two = {'x': '585.13', 'y': 10, 'z': '7', createdAt: parseDate('27-Apr-12')};
-//console.log(JSON.stringify(two));
 });
 
 var doneFirst = false;
@@ -37,9 +28,15 @@ Template.Graph.created = function () {
         .scale(y)
         .orient("left");
 
-    var line = d3.svg.line()
+    var lineX = d3.svg.line()
         .x(function(d) { return x(d.createdAt); })
         .y(function(d) { return y(d.x); });
+    var lineY = d3.svg.line()
+        .x(function(d) { return x(d.createdAt); })
+        .y(function(d) { return y(d.y); });
+    var lineZ = d3.svg.line()
+        .x(function(d) { return x(d.createdAt); })
+        .y(function(d) { return y(d.z); });
 
     if (!doneFirst) {
         doneFirst = true;
@@ -50,10 +47,8 @@ Template.Graph.created = function () {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
 
-
     Tracker.autorun(function () {
         var data = Accels.find();
-        //console.log('run this', data.map(function(d) {return d}));
         data = data.map(function(d) {
             var ret = {};
             ret.createdAt = new Date(d.createdAt);
@@ -84,7 +79,15 @@ Template.Graph.created = function () {
 
         svg.append("path")
           .datum(data)
-          .attr("class", "line")
-          .attr("d", line);
+          .attr("class", "lineX")
+          .attr("d", lineX);
+        svg.append("path")
+          .datum(data)
+          .attr("class", "lineY")
+          .attr("d", lineY);
+        svg.append("path")
+          .datum(data)
+          .attr("class", "lineZ")
+          .attr("d", lineZ);
     });
 }

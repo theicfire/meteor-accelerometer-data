@@ -144,8 +144,18 @@ body {
   display: none;
 }
 
-.line {
+.lineX {
   fill: none;
   stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.lineY {
+  fill: none;
+  stroke: red;
+  stroke-width: 1.5px;
+}
+.lineZ {
+  fill: none;
+  stroke: green;
   stroke-width: 1.5px;
 }

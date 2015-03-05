@@ -29,3 +29,20 @@ Router.route('/accels/:x/:y/:z', {where: 'server'})
       Accels.insert(accel);
       this.response.end('Received x of ' + JSON.stringify(accel) + '\n');
   });
+
+Router.route('/multi_accels', {where: 'server'})
+  .post(function () {
+      console.log('request', this.request.body);
+      var points = this.request.body;
+      for (var i = 0; i < points.length; i++) {
+          var accel = {
+              x: points[i][0],
+              y: points[i][1],
+              z: points[i][2],
+              createdAt: new Date(points[i][3]) // current time
+          };
+          console.log('insert', accel);
+          Accels.insert(accel);
+      }
+      this.response.end('got some request');
+  });

@@ -50,6 +50,9 @@ Template.Graph.created = function () {
     Tracker.autorun(function () {
         //var data = Accels.find({createdAt: {$gt: new Date(new Date().getTime() - 1000 * 120)}});
         var row = AllAccels.findOne();
+        if (!row) {
+            return;
+        }
         console.log('row', row);
         var data = [];
         for (var i = 0; i < row.xs.length; i++) {

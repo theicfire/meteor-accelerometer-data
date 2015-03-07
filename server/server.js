@@ -50,6 +50,6 @@ Router.route('/multi_accels', {where: 'server'})
       AllAccels.update({}, {$pushAll: {xs: xs}});
       AllAccels.update({}, {$pushAll: {ys: ys}});
       AllAccels.update({}, {$pushAll: {zs: zs}});
-      AllAccels.update({}, {$pushAll: {createdAt: times}});
+      AllAccels.update({}, {$pushAll: {times: times}});
       this.response.end('got some request');
   });

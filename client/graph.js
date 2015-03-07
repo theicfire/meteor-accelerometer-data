@@ -55,8 +55,10 @@ Template.Graph.created = function () {
         }
         console.log('row', row);
         var data = [];
-        for (var i = 0; i < row.xs.length; i++) {
-            data.push({x: parseFloat(row.xs[i]), y: parseFloat(row.ys[i]), z: parseFloat(row.zs[i]), createdAt: new Date(row.createdAt[i])});
+        // Important I look at the "times" length and not xs or something, because that's the last
+        // array that is updated in mongo
+        for (var i = 0; i < row.times.length; i++) {
+            data.push({x: parseFloat(row.xs[i]), y: parseFloat(row.ys[i]), z: parseFloat(row.zs[i]), createdAt: new Date(row.times[i])});
         }
         console.log('GRAPH data', data);
 

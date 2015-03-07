@@ -1,6 +1,6 @@
 Template.Graph.helpers({
   count: function () {
-      return Accels.find().count();
+      return AllAccels.find().count();
   }
 });
 Router.route('/graph', function () {
@@ -48,17 +48,15 @@ Template.Graph.created = function () {
     }
 
     Tracker.autorun(function () {
-        var data = Accels.find({createdAt: {$gt: new Date(new Date().getTime() - 1000 * 120)}});
-        //var data = Accels.find();
+        //var data = Accels.find({createdAt: {$gt: new Date(new Date().getTime() - 1000 * 120)}});
+        var row = AllAccels.findOne();
+        console.log('row', row);
+        var data = [];
+        for (var i = 0; i < row.xs.length; i++) {
+            data.push({x: parseFloat(row.xs[i]), y: parseFloat(row.ys[i]), z: parseFloat(row.zs[i]), createdAt: new Date(row.createdAt[i])});
+        }
+        console.log('GRAPH data', data);
 
-        data = data.map(function(d) {
-            var ret = {};
-            ret.createdAt = new Date(d.createdAt);
-            ret.x = parseFloat(d.x);
-            ret.y = parseFloat(d.y);
-            ret.z = parseFloat(d.z);
-            return ret;
-        });
         x.domain(d3.extent(data, function(d) { return d.createdAt; }));
         y.domain(d3.extent(data, function(d) { return d.x; }));
 

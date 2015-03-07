@@ -18,31 +18,38 @@ Router.route('/task/:task', {where: 'server'})
     this.response.end('post request ' + this.params.task + '\n');
   });
 
-Router.route('/accels/:x/:y/:z', {where: 'server'})
-  .post(function () {
-      var accel = {
-          x: this.params.x,
-          y: this.params.y,
-          z: this.params.z,
-          createdAt: new Date() // current time
-      };
-      Accels.insert(accel);
-      this.response.end('Received x of ' + JSON.stringify(accel) + '\n');
-  });
+//Router.route('/accels/:x/:y/:z', {where: 'server'})
+  //.post(function () {
+      //var accel = {
+          //x: this.params.x,
+          //y: this.params.y,
+          //z: this.params.z,
+          //createdAt: new Date() // current time
+      //};
+      //Accels.insert(accel);
+      //this.response.end('Received x of ' + JSON.stringify(accel) + '\n');
+  //});
 
 Router.route('/multi_accels', {where: 'server'})
   .post(function () {
+      if (AllAccels.find().count() === 0) {
+          AllAccels.insert({xs: [], ys: [], zs: [], times: []});
+      }
       console.log('request', this.request.body);
+      var xs = [];
+      var ys = [];
+      var zs = [];
+      var times = [];
       var points = this.request.body;
       for (var i = 0; i < points.length; i++) {
-          var accel = {
-              x: points[i][0],
-              y: points[i][1],
-              z: points[i][2],
-              createdAt: new Date(points[i][3]) // current time
-          };
-          console.log('insert', accel);
-          Accels.insert(accel);
+          xs.push(points[i][0]);
+          ys.push(points[i][1]);
+          zs.push(points[i][2]);
+          times.push(new Date(points[i][3]));
       }
+      AllAccels.update({}, {$pushAll: {xs: xs}});
+      AllAccels.update({}, {$pushAll: {ys: ys}});
+      AllAccels.update({}, {$pushAll: {zs: zs}});
+      AllAccels.update({}, {$pushAll: {createdAt: times}});
       this.response.end('got some request');
   });

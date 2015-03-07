@@ -1,8 +1,18 @@
 Template.Graph.helpers({
   count: function () {
-      return AllAccels.find().count();
+      if (AllAccels.findOne()) {
+          return AllAccels.findOne().times.length;
+      }
+      return 0;
   }
 });
+
+Template.Graph.events({
+  "click .setClearFlag": function (event) {
+      Meteor.call('setClearFlag');
+  }
+});
+
 Router.route('/graph', function () {
     //var parseDate = d3.time.format("%d-%b-%y").parse;
 
@@ -53,17 +63,21 @@ Template.Graph.created = function () {
         if (!row) {
             return;
         }
-        console.log('row', row);
         var data = [];
         // Important I look at the "times" length and not xs or something, because that's the last
         // array that is updated in mongo
+        var curTime = new Date();
         for (var i = 0; i < row.times.length; i++) {
-            data.push({x: parseFloat(row.xs[i]), y: parseFloat(row.ys[i]), z: parseFloat(row.zs[i]), createdAt: new Date(row.times[i])});
+            if (curTime - new Date(row.times[i]) < 120000) {
+                data.push({x: parseFloat(row.xs[i]), y: parseFloat(row.ys[i]), z: parseFloat(row.zs[i]), createdAt: new Date(row.times[i])});
+            }
         }
-        console.log('GRAPH data', data);
+
+        var maxY = d3.max(data, function (d) {return Math.max(d.x, d.y, d.z)});
+        var minY = d3.min(data, function (d) {return Math.min(d.x, d.y, d.z)});
 
         x.domain(d3.extent(data, function(d) { return d.createdAt; }));
-        y.domain(d3.extent(data, function(d) { return d.x; }));
+        y.domain([minY, maxY]);
 
         var svg = d3.select('svg g');
         svg.html('');

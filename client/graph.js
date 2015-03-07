@@ -1,9 +1,9 @@
+Template.Graph.helpers({
+  count: function () {
+      return Accels.find().count();
+  }
+});
 Router.route('/graph', function () {
-    //Template.Graph.helpers({
-      //accels: function () {
-          //return Accels.find();
-      //}
-    //});
     //var parseDate = d3.time.format("%d-%b-%y").parse;
 
     this.render('Graph');
@@ -48,7 +48,9 @@ Template.Graph.created = function () {
     }
 
     Tracker.autorun(function () {
-        var data = Accels.find();
+        var data = Accels.find({createdAt: {$gt: new Date(new Date().getTime() - 1000 * 120)}});
+        //var data = Accels.find();
+
         data = data.map(function(d) {
             var ret = {};
             ret.createdAt = new Date(d.createdAt);

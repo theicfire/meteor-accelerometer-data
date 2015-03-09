@@ -62,6 +62,12 @@ var clearOldAccels = function() {
   AllAccels.update({}, {$set: {zs: zs}});
 };
 
+Router.route('/hitter/:time', {where: 'server'})
+  .post(function () {
+          Hitters.insert({androidTime: this.params.time, createdAt: new Date()});
+          this.response.end('done');
+    });
+
 Router.route('/multi_accels', {where: 'server'})
   .post(function () {
       if (AllAccels.find().count() === 0) {

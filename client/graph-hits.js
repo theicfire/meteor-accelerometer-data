@@ -10,6 +10,15 @@ Router.route('/hitter', function () {
     this.render('Hitter');
 });
 
+Router.route('/hithitter', function () {
+    //var parseDate = d3.time.format("%d-%b-%y").parse;
+
+    this.render('HitHitter');
+    setInterval(function() {
+          Hitters.insert({androidTime: (new Date()).getTime(), createdAt: new Date()});
+
+      }, 200);
+});
 
 var doneFirst = false;
 Template.Hitter.created = function () {
@@ -30,14 +39,9 @@ Template.Hitter.created = function () {
         .scale(y)
         .orient("left");
 
-    var hitCount = 0;
     var lineHits = d3.svg.line()
         .x(function(d) { return x(d.androidTime); })
-        .y(function(d) { 
-                console.log('count', hitCount);
-                hitCount += 1;
-                return y(hitCount);
-            });
+        .y(function (d, i) { return y(i)});
 
     if (!doneFirst) {
         doneFirst = true;
@@ -52,13 +56,16 @@ Template.Hitter.created = function () {
         //var data = Accels.find({createdAt: {$gt: new Date(new Date().getTime() - 1000 * 120)}});
         var rows = Hitters.find();
         var data = rows.map(function(d) {
-                return d;
+                return {androidTime: parseInt(d.androidTime)};
             });
+        console.log(data);
 
-        var maxY = 50;
+        var maxY = data.length;
         var minY = 0;
 
-        x.domain(d3.extent(data, function(d) { return d.androidTime; }));
+        var extent = d3.extent(data, function(d) { return d.androidTime; });
+        console.log('extent', extent);
+        x.domain(extent);
         y.domain([minY, maxY]);
 
         var svg = d3.select('svg g');

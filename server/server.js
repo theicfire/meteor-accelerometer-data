@@ -1,5 +1,35 @@
+var gcm = Npm.require('node-gcm');
+var reg_id = 'APA91bFoHl8IksJdGaJzl9k01BzvqqaoBu_SR6BXNAPGfnut_rGlE1jYFx64c3mosVHYm8t7lyfvcF1LN2O8wb6E1HhaYyxFoPP56okn7dXHR9PSh4t8pxu6LEYY5DMBH8noQ-hq75H4cdSH8snqQcOYr1S0o9RxJXWQQR-ze2Zctrkj8Xke3Pimz5z59wGdkTeDy0lmx-Rq';
+
+var sendSomeMessage = function() {
+    var message = new gcm.Message({
+        //collapseKey: 'demo',
+        //delayWhileIdle: true,
+        //timeToLive: 3,
+        data: {
+            key1: 'message1',
+            key2: 'message2'
+        }
+    });
+     
+    // Set up the sender with you API key 
+    var sender = new gcm.Sender('AIzaSyB7HbfqjrISHU3MDBr_7DQM-4BmdaLUoTw');
+     
+    // Add the registration IDs of the devices you want to send to 
+    var registrationIds = [];
+    registrationIds.push('APA91bFoHl8IksJdGaJzl9k01BzvqqaoBu_SR6BXNAPGfnut_rGlE1jYFx64c3mosVHYm8t7lyfvcF1LN2O8wb6E1HhaYyxFoPP56okn7dXHR9PSh4t8pxu6LEYY5DMBH8noQ-hq75H4cdSH8snqQcOYr1S0o9RxJXWQQR-ze2Zctrkj8Xke3Pimz5z59wGdkTeDy0lmx-Rq');
+     
+    // Send the message 
+    // ... trying only once 
+    console.log('now SENDING');
+    sender.sendNoRetry(message, registrationIds, function(err, result) {
+      if(err) console.error(err);
+      else    console.log(result);
+    });
+}
 Meteor.methods({
     setClearFlag: function() {
+        sendSomeMessage();
         BatchAccels.remove({}); // Clear everything :p
         console.log('removing everything');
     }
@@ -10,7 +40,6 @@ Meteor.startup(function () {
       BatchAccels.insert({accelsJson: "[]"});
   }
 });
-
 
 Router.route('/task/:task', {where: 'server'})
   .post(function () {
@@ -56,6 +85,13 @@ Router.route('/task/:task', {where: 'server'})
   //AllAccels.update({}, {$set: {ys: ys}});
   //AllAccels.update({}, {$set: {zs: zs}});
 //};
+
+Router.route('/regid/:regid', {where: 'server'})
+    .post(function () {
+            // TODO mongo back this up
+            reg_id = this.params.regid;
+            console.log('regid is', reg_id);
+        });
 
 Router.route('/hitter/:time', {where: 'server'})
   .post(function () {

@@ -12,8 +12,8 @@ var sendSomeMessage = function() {
         //delayWhileIdle: true,
         //timeToLive: 3,
         data: {
-            key1: 'message1',
-            key2: 'message2'
+            method: 'speak',
+            text: 'this is the best'
         }
     });
      

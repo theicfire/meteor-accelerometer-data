@@ -14,6 +14,11 @@ Template.Graph.helpers({
 Template.Graph.events({
   "click .setClearFlag": function (event) {
       Meteor.call('setClearFlag');
+  },
+  "submit .ttsForm": function (event) {
+      console.log('change to', event.target.children[0].value);
+      Meteor.call('sendMsg', event.target.children[0].value);
+      return false;
   }
 });
 

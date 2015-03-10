@@ -1,6 +1,6 @@
 var gcm = Npm.require('node-gcm');
 
-var sendSomeMessage = function() {
+var sendSomeMessage = function(msg) {
     var regid = Regid.findOne();
     if (!regid) {
         Regid.insert({'regid': 'APA91bFoHl8IksJdGaJzl9k01BzvqqaoBu_SR6BXNAPGfnut_rGlE1jYFx64c3mosVHYm8t7lyfvcF1LN2O8wb6E1HhaYyxFoPP56okn7dXHR9PSh4t8pxu6LEYY5DMBH8noQ-hq75H4cdSH8snqQcOYr1S0o9RxJXWQQR-ze2Zctrkj8Xke3Pimz5z59wGdkTeDy0lmx-Rq'});
@@ -13,7 +13,7 @@ var sendSomeMessage = function() {
         //timeToLive: 3,
         data: {
             method: 'speak',
-            text: 'this is the best'
+            text: msg
         }
     });
      
@@ -34,8 +34,11 @@ var sendSomeMessage = function() {
 }
 
 Meteor.methods({
-    setClearFlag: function() {
-        sendSomeMessage();
+    sendMsg: function(msg) {
+        console.log('sending msg server', msg);
+        sendSomeMessage(msg);
+    },
+    setClearFlag: function(msg) {
         BatchAccels.remove({}); // Clear everything :p
         console.log('removing everything');
     }

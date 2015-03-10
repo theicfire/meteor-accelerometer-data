@@ -1,9 +1,13 @@
 Template.Graph.helpers({
   count: function () {
-      if (AllAccels.findOne()) {
-          return AllAccels.findOne().times.length;
+      var lens = BatchAccels.find().map(function (x) {
+              return JSON.parse(x.accelsJson).length;
+          });
+      console.log('lens', lens);
+      if (lens.length === 0) {
+          return 0;
       }
-      return 0;
+      return lens.reduce(function (a, b) {return a + b})
   }
 });
 
@@ -59,19 +63,39 @@ Template.Graph.created = function () {
 
     Tracker.autorun(function () {
         //var data = Accels.find({createdAt: {$gt: new Date(new Date().getTime() - 1000 * 120)}});
-        var row = AllAccels.findOne();
-        if (!row) {
-            return;
-        }
-        var data = [];
-        // Important I look at the "times" length and not xs or something, because that's the last
-        // array that is updated in mongo
+        var batchAccelsRaw = BatchAccels.find().map(function(x) {
+                    return JSON.parse(x.accelsJson);
+                });
+        var batchAccels = [];
+        console.log('raw', batchAccelsRaw);
         var curTime = new Date();
-        for (var i = 0; i < row.times.length; i++) {
-            if (curTime - new Date(row.times[i]) < 120000) {
-                data.push({x: parseFloat(row.xs[i]), y: parseFloat(row.ys[i]), z: parseFloat(row.zs[i]), createdAt: new Date(row.times[i])});
+        for (var i = 0; i < batchAccelsRaw.length; i++) {
+            //console.log('length', batchAccelsRaw[i].length);
+            for (var j = 0; j < batchAccelsRaw[i].length; j++) {
+                if (curTime - new Date(batchAccelsRaw[i][j][3]) < 20000) {
+                    batchAccels.push({x: batchAccelsRaw[i][j][0],
+                                      y: batchAccelsRaw[i][j][1],
+                                      z: batchAccelsRaw[i][j][2],
+                                      createdAt: new Date(batchAccelsRaw[i][j][3])});
+                }
             }
         }
+        var data = batchAccels;
+        console.log('now have', batchAccels);
+        //var row = AllAccels.findOne();
+        //if (!row) {
+            //return;
+        //}
+        //var data = [];
+        //// Important I look at the "times" length and not xs or something, because that's the last
+        //// array that is updated in mongo
+        //var curTime = new Date();
+        //for (var i = 0; i < row.times.length; i++) {
+            ////if (curTime - new Date(row.times[i]) < 120000) {
+                //data.push({x: parseFloat(row.xs[i]), y: parseFloat(row.ys[i]), z: parseFloat(row.zs[i]), createdAt: new Date(row.times[i])});
+            ////}
+        //}
+        //console.log('vs data', data);
 
         var maxY = d3.max(data, function (d) {return Math.max(d.x, d.y, d.z)});
         var minY = d3.min(data, function (d) {return Math.min(d.x, d.y, d.z)});

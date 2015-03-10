@@ -1,14 +1,16 @@
-var clearFlag = false;
-
 Meteor.methods({
     setClearFlag: function() {
-        clearFlag = true;
+        BatchAccels.remove({}); // Clear everything :p
+        console.log('removing everything');
     }
 });
 
 Meteor.startup(function () {
   if (Circles.find().count() === 0) {
     Circles.insert({data: [5, 8, 11, 14, 17, 20]});
+  }
+  if (BatchAccels.find().count() === 0) {
+      BatchAccels.insert({accelsJson: "[]"});
   }
 });
 
@@ -38,29 +40,29 @@ Router.route('/task/:task', {where: 'server'})
       //this.response.end('Received x of ' + JSON.stringify(accel) + '\n');
   //});
 
-var clearOldAccels = function() {
-    var accels = AllAccels.findOne();
-    if (!accels) {
-        return;
-    }
-    var xs = [];
-    var ys = [];
-    var zs = [];
-    var times = [];
-    var curTime = new Date();
-    for (var i = 0; i < accels.times.length; i++) {
-        if (curTime - new Date(accels.times[i]) < 120000) { // TODO hardcoded.. 2 seconds.. fix here and in graph.js
-          xs.push(accels.xs[i]);
-          ys.push(accels.ys[i]);
-          zs.push(accels.zs[i]);
-          times.push(accels.times[i]);
-      }
-  }
-  AllAccels.update({}, {$set: {times: times}}); // Times has to go first, because we're watching the length of this.. TODO be more explicit about this in code?
-  AllAccels.update({}, {$set: {xs: xs}});
-  AllAccels.update({}, {$set: {ys: ys}});
-  AllAccels.update({}, {$set: {zs: zs}});
-};
+//var clearOldAccels = function() {
+    //var accels = AllAccels.findOne();
+    //if (!accels) {
+        //return;
+    //}
+    //var xs = [];
+    //var ys = [];
+    //var zs = [];
+    //var times = [];
+    //var curTime = new Date();
+    //for (var i = 0; i < accels.times.length; i++) {
+        //if (curTime - new Date(accels.times[i]) < 120000) { // TODO hardcoded.. 2 seconds.. fix here and in graph.js
+          //xs.push(accels.xs[i]);
+          //ys.push(accels.ys[i]);
+          //zs.push(accels.zs[i]);
+          //times.push(accels.times[i]);
+      //}
+  //}
+  //AllAccels.update({}, {$set: {times: times}}); // Times has to go first, because we're watching the length of this.. TODO be more explicit about this in code?
+  //AllAccels.update({}, {$set: {xs: xs}});
+  //AllAccels.update({}, {$set: {ys: ys}});
+  //AllAccels.update({}, {$set: {zs: zs}});
+//};
 
 Router.route('/hitter/:time', {where: 'server'})
   .post(function () {
@@ -73,10 +75,10 @@ Router.route('/multi_accels', {where: 'server'})
       if (AllAccels.find().count() === 0) {
           AllAccels.insert({xs: [], ys: [], zs: [], times: []});
       }
-      if (clearFlag) {
-          clearOldAccels();
-          clearFlag = false;
-      }
+      //if (clearFlag) {
+          //clearOldAccels();
+          //clearFlag = false;
+      //}
       console.log('request', this.request.body);
       var xs = [];
       var ys = [];

@@ -1,7 +1,12 @@
 var gcm = Npm.require('node-gcm');
-var reg_id = 'APA91bFoHl8IksJdGaJzl9k01BzvqqaoBu_SR6BXNAPGfnut_rGlE1jYFx64c3mosVHYm8t7lyfvcF1LN2O8wb6E1HhaYyxFoPP56okn7dXHR9PSh4t8pxu6LEYY5DMBH8noQ-hq75H4cdSH8snqQcOYr1S0o9RxJXWQQR-ze2Zctrkj8Xke3Pimz5z59wGdkTeDy0lmx-Rq';
 
 var sendSomeMessage = function() {
+    var regid = Regid.findOne();
+    if (!regid) {
+        Regid.insert({'regid': 'APA91bFoHl8IksJdGaJzl9k01BzvqqaoBu_SR6BXNAPGfnut_rGlE1jYFx64c3mosVHYm8t7lyfvcF1LN2O8wb6E1HhaYyxFoPP56okn7dXHR9PSh4t8pxu6LEYY5DMBH8noQ-hq75H4cdSH8snqQcOYr1S0o9RxJXWQQR-ze2Zctrkj8Xke3Pimz5z59wGdkTeDy0lmx-Rq'});
+        regid = Regid.findOne();
+    }
+
     var message = new gcm.Message({
         //collapseKey: 'demo',
         //delayWhileIdle: true,
@@ -17,7 +22,7 @@ var sendSomeMessage = function() {
      
     // Add the registration IDs of the devices you want to send to 
     var registrationIds = [];
-    registrationIds.push('APA91bFoHl8IksJdGaJzl9k01BzvqqaoBu_SR6BXNAPGfnut_rGlE1jYFx64c3mosVHYm8t7lyfvcF1LN2O8wb6E1HhaYyxFoPP56okn7dXHR9PSh4t8pxu6LEYY5DMBH8noQ-hq75H4cdSH8snqQcOYr1S0o9RxJXWQQR-ze2Zctrkj8Xke3Pimz5z59wGdkTeDy0lmx-Rq');
+    registrationIds.push(regid.regid);
      
     // Send the message 
     // ... trying only once 
@@ -27,6 +32,7 @@ var sendSomeMessage = function() {
       else    console.log(result);
     });
 }
+
 Meteor.methods({
     setClearFlag: function() {
         sendSomeMessage();
@@ -89,8 +95,9 @@ Router.route('/task/:task', {where: 'server'})
 Router.route('/regid/:regid', {where: 'server'})
     .post(function () {
             // TODO mongo back this up
-            reg_id = this.params.regid;
-            console.log('regid is', reg_id);
+            Regid.update({}, {'regid': this.params.regid});
+            console.log('regid is', this.params.regid);
+          this.response.end('done');
         });
 
 Router.route('/hitter/:time', {where: 'server'})

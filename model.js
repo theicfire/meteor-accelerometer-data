@@ -4,4 +4,5 @@ Circles = new Meteor.Collection('circles');
 AllAccels = new Meteor.Collection('allaccels');
 Hitters = new Meteor.Collection('hitters');
 BatchAccels = new Meteor.Collection('batchAccels');
+Regid = new Meteor.Collection('regid');
 // something

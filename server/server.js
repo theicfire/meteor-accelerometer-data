@@ -1,4 +1,4 @@
-var gcm = Npm.require('node-gcm');
+var gcm = Meteor.npmRequire('node-gcm');
 
 var sendSomeMessage = function(msg) {
     var regid = Regid.findOne();

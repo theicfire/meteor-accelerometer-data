@@ -9,3 +9,7 @@ autopublish
 insecure
 iron:router
 d3
+meteorhacks:npm
+
+
+npm-container

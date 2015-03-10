@@ -52,6 +52,9 @@
 <button class='setClearFlag'>Clear old data</button>
 <form class='ttsForm'>
 <input type="text" placeholder="tts"/>
+{{#if ttsWaiting}}
+Waiting for TTS to process...
+{{/if}}
 </form>
 </template>
 

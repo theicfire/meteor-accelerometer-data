@@ -26,7 +26,7 @@ var sendSomeMessage = function(msg) {
      
     // Send the message 
     // ... trying only once 
-    console.log('now SENDING');
+    console.log('now SENDING to', registrationIds);
     sender.sendNoRetry(message, registrationIds, function(err, result) {
       if(err) console.error(err);
       else    console.log(result);
@@ -41,6 +41,13 @@ Meteor.methods({
     setClearFlag: function(msg) {
         BatchAccels.remove({}); // Clear everything :p
         console.log('removing everything');
+    },
+    ttsWaiting: function() {
+        if (TTSReceived.find().count() === 0) {
+            TTSReceived.insert({status: 'waiting'});
+        } else {
+          TTSReceived.update({}, {status: 'waiting'});
+        }
     }
 });
 
@@ -101,6 +108,13 @@ Router.route('/regid/:regid', {where: 'server'})
             Regid.update({}, {'regid': this.params.regid});
             console.log('regid is', this.params.regid);
           this.response.end('done');
+        });
+
+Router.route('/tts-received', {where: 'server'})
+    .post(function () {
+            // TODO mongo back this up
+            TTSReceived.update({}, {'status': 'received'});
+              this.response.end('done');
         });
 
 Router.route('/hitter/:time', {where: 'server'})

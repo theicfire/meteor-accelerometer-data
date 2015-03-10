@@ -8,6 +8,10 @@ Template.Graph.helpers({
           return 0;
       }
       return lens.reduce(function (a, b) {return a + b})
+  },
+  ttsWaiting: function () {
+      var row = TTSReceived.findOne();
+      return row && row.status === 'waiting';
   }
 });
 
@@ -16,8 +20,10 @@ Template.Graph.events({
       Meteor.call('setClearFlag');
   },
   "submit .ttsForm": function (event) {
+      event.preventDefault();
       console.log('change to', event.target.children[0].value);
       Meteor.call('sendMsg', event.target.children[0].value);
+      Meteor.call('ttsWaiting');
       return false;
   }
 });

@@ -33,6 +33,7 @@ var sendSomeMessage = function(msg) {
     });
 }
 
+
 Meteor.methods({
     sendMsg: function(msg) {
         console.log('sending msg server', msg);
@@ -52,9 +53,17 @@ Meteor.methods({
 });
 
 Meteor.startup(function () {
+    Fiber = Npm.require('fibers');
   if (BatchAccels.find().count() === 0) {
       BatchAccels.insert({accelsJson: "[]"});
   }
+    setInterval(function() {
+            Fiber(function() {
+                    if (BatchAccels.find().count() > 20000) {
+                        BatchAccels.remove({});
+                    }
+                }).run();
+        }, 1000);
 });
 
 Router.route('/task/:task', {where: 'server'})

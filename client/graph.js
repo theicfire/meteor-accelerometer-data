@@ -1,13 +1,6 @@
 Template.Graph.helpers({
   count: function () {
-      var lens = BatchAccels.find().map(function (x) {
-              return JSON.parse(x.accelsJson).length;
-          });
-      console.log('lens', lens);
-      if (lens.length === 0) {
-          return 0;
-      }
-      return lens.reduce(function (a, b) {return a + b})
+      return getAccelsCount();
   },
   ttsWaiting: function () {
       var row = TTSReceived.findOne();

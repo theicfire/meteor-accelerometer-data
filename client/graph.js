@@ -37,8 +37,8 @@ Router.route('/graph', function () {
 var doneFirst = false;
 Template.Graph.created = function () {
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
-        width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        width = 1500 - margin.left - margin.right,
+        height = 800 - margin.top - margin.bottom;
     var x = d3.time.scale()
         .range([0, width]);
 
@@ -108,8 +108,8 @@ Template.Graph.created = function () {
         //}
         //console.log('vs data', data);
 
-        var maxY = d3.max(data, function (d) {return Math.max(d.x, d.y, d.z)});
-        var minY = d3.min(data, function (d) {return Math.min(d.x, d.y, d.z)});
+        var maxY = 40;// d3.max(data, function (d) {return Math.max(d.x, d.y, d.z)});
+        var minY = -40; //d3.min(data, function (d) {return Math.min(d.x, d.y, d.z)});
 
         x.domain(d3.extent(data, function(d) { return d.createdAt; }));
         y.domain([minY, maxY]);

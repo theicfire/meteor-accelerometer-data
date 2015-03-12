@@ -48,8 +48,18 @@
 
 
 <template name="Graph">
-<div>{{count}} data points.</div>
+<div>
+{{count}} data points.
 <button class='setClearFlag'>Clear old data</button>
+</div>
+<div>
+
+Special message to phone: 
+{{#each ttsButtons}}
+<button class="ttsButton">{{val}}</button>
+{{/each}}
+</div>
+
 <form class='ttsForm'>
 <input type="text" placeholder="tts"/>
 {{#if ttsWaiting}}
@@ -57,6 +67,7 @@ Waiting for TTS to process...
 {{/if}}
 </form>
 </template>
+
 
 <template name="Hitter">
 <div>{{count}} hits.</div>

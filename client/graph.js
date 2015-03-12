@@ -5,6 +5,9 @@ Template.Graph.helpers({
   ttsWaiting: function () {
       var row = TTSReceived.findOne();
       return row && row.status === 'waiting';
+  },
+  ttsButtons: function () {
+      return ['gps-off', 'gps-on', 'prod', 'debug', 'alarm-reset'].map(function (x) {return {val: x}});
   }
 });
 
@@ -18,6 +21,10 @@ Template.Graph.events({
       Meteor.call('sendMsg', event.target.children[0].value);
       Meteor.call('ttsWaiting');
       return false;
+  },
+  "click .ttsButton": function (event) {
+      Meteor.call('sendMsg', event.target.innerHTML);
+      Meteor.call('ttsWaiting');
   }
 });
 

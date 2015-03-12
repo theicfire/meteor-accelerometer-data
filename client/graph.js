@@ -20,6 +20,9 @@ Template.Graph.helpers({
   ttsButtons: function () {
       return ['gps-off', 'gps-on', 'prod', 'debug', 'alarm-reset'].map(function (x) {return {val: x}});
   },
+  ttsPretextButtons: function () {
+      return ['Subject is walking', 'Subject is running', 'Hi, would you mind putting this bike upright?', 'Bike is being tampered with at the California Avenue cal train station. Authorities notified.'].map(function (x) {return {val: x}});
+  },
   soundAlarmOn: function() {
       var ret = Session.get('soundAlarmOn');
       console.log('return ', ret);
@@ -40,15 +43,19 @@ Template.Graph.events({
   },
   "click .ttsButton": function (event) {
       Meteor.call('sendMsg', event.target.innerHTML);
-      if (event.target.innerHTML === 'alarm-reset') {
-          document.getElementById('alertAudio').pause();
-          document.getElementById('alertAudio').currentTime = 0;
-          setTimeout(function() {
-              Session.set('soundAlarmOn', true);
-          }, 1000);
-      }
       Meteor.call('ttsWaiting', function () {
+          if (event.target.innerHTML === 'alarm-reset') {
+              document.getElementById('alertAudio').pause();
+              document.getElementById('alertAudio').currentTime = 0;
+              setTimeout(function() {
+                  Session.set('soundAlarmOn', true);
+              }, 1000);
+          }
       });
+  },
+  "click .ttsPretextButton": function (event) {
+      Meteor.call('sendMsg', event.target.innerHTML);
+      Meteor.call('ttsWaiting');
   }
 });
 

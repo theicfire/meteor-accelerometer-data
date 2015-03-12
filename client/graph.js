@@ -1,8 +1,17 @@
-var soundAlarmOn = false;
+Session.set('soundAlarmOn', false);
+var curCount = -1;
 
 Template.Graph.helpers({
   count: function () {
-      return getAccelsCount();
+      var ret = getAccelsCount();
+      if (Session.get('soundAlarmOn')) {
+          if (ret != curCount) {
+              document.getElementById('alertAudio').play();
+              Session.set('soundAlarmOn', false);
+          }
+      }
+      curCount = ret;
+      return ret;
   },
   ttsWaiting: function () {
       var row = TTSReceived.findOne();
@@ -10,6 +19,11 @@ Template.Graph.helpers({
   },
   ttsButtons: function () {
       return ['gps-off', 'gps-on', 'prod', 'debug', 'alarm-reset'].map(function (x) {return {val: x}});
+  },
+  soundAlarmOn: function() {
+      var ret = Session.get('soundAlarmOn');
+      console.log('return ', ret);
+      return ret;
   }
 });
 
@@ -25,11 +39,14 @@ Template.Graph.events({
       return false;
   },
   "click .ttsButton": function (event) {
-      if (event.target.innerHTML === 'alarm-reset') {
-          soundAlarmOn = true;
-      }
       Meteor.call('sendMsg', event.target.innerHTML);
-      Meteor.call('ttsWaiting');
+      setTimeout(function() {
+          if (event.target.innerHTML === 'alarm-reset') {
+              console.log('soundalarm');
+              Session.set('soundAlarmOn', true);
+          }}, 1000);
+      Meteor.call('ttsWaiting', function () {
+      });
   }
 });
 
@@ -78,10 +95,6 @@ Template.Graph.created = function () {
     }
 
     Tracker.autorun(function () {
-        if (soundAlarmOn) {
-              document.getElementById('alertAudio').play();
-              soundAlarmOn = false;
-        }
         //var data = Accels.find({createdAt: {$gt: new Date(new Date().getTime() - 1000 * 120)}});
         var batchAccelsRaw = BatchAccels.find().map(function(x) {
                     return JSON.parse(x.accelsJson);

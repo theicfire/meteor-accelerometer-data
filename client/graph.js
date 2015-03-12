@@ -40,11 +40,13 @@ Template.Graph.events({
   },
   "click .ttsButton": function (event) {
       Meteor.call('sendMsg', event.target.innerHTML);
-      setTimeout(function() {
-          if (event.target.innerHTML === 'alarm-reset') {
-              console.log('soundalarm');
+      if (event.target.innerHTML === 'alarm-reset') {
+          document.getElementById('alertAudio').pause();
+          document.getElementById('alertAudio').currentTime = 0;
+          setTimeout(function() {
               Session.set('soundAlarmOn', true);
-          }}, 1000);
+          }, 1000);
+      }
       Meteor.call('ttsWaiting', function () {
       });
   }

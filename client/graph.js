@@ -175,8 +175,8 @@ Template.Graph.created = function () {
           if (curAlarmCount > alarmCount) {
               document.getElementById('alertAudio').play();
               Session.set('soundAlarmOn', false);
-              alarmCount = curAlarmCount;
           }
       }
+      alarmCount = curAlarmCount;
     });
 }

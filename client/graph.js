@@ -1,17 +1,9 @@
 Session.set('soundAlarmOn', false);
-var curCount = -1;
+var alarmCount = -1;
 
 Template.Graph.helpers({
   count: function () {
-      var ret = getAccelsCount();
-      if (Session.get('soundAlarmOn')) {
-          if (ret != curCount) {
-              document.getElementById('alertAudio').play();
-              Session.set('soundAlarmOn', false);
-          }
-      }
-      curCount = ret;
-      return ret;
+      return getAccelsCount();
   },
   ttsWaiting: function () {
       var row = TTSReceived.findOne();
@@ -174,5 +166,17 @@ Template.Graph.created = function () {
           .datum(data)
           .attr("class", "lineZ")
           .attr("d", lineZ);
+    });
+
+    Tracker.autorun(function() {
+      console.log('checking alarm coun');
+      var curAlarmCount = Alarms.find().count();
+      if (Session.get('soundAlarmOn')) {
+          if (curAlarmCount > alarmCount) {
+              document.getElementById('alertAudio').play();
+              Session.set('soundAlarmOn', false);
+              alarmCount = curAlarmCount;
+          }
+      }
     });
 }

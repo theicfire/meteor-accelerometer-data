@@ -52,7 +52,6 @@ Meteor.methods({
     }
 });
 
-// hi
 Meteor.startup(function () {
     Fiber = Npm.require('fibers');
   if (BatchAccels.find().count() === 0) {
@@ -62,6 +61,7 @@ Meteor.startup(function () {
             Fiber(function() {
                     if (getAccelsCount() > 20000) {
                         BatchAccels.remove({});
+                        Alarms.remove({});
                     }
                 }).run();
         }, 1000);

@@ -1,4 +1,7 @@
 var gcm = Meteor.npmRequire('node-gcm');
+var request = Meteor.npmRequire('request');
+var lastCount = -1;
+var CHECK_INTERVAL = 5000;
 
 var sendSomeMessage = function(msg) {
     var regid = Regid.findOne();
@@ -34,6 +37,13 @@ var sendSomeMessage = function(msg) {
 }
 
 
+var setGlobalState = function(name, value) {
+    console.log('setglobal', name, value);
+    Other.upsert({name:name}, {name:name, value: value});
+    console.log('is it waiting?', getGlobalState('TTSReceived'));
+};
+
+
 Meteor.methods({
     sendMsg: function(msg) {
         console.log('sending msg server', msg);
@@ -43,38 +53,138 @@ Meteor.methods({
         BatchAccels.remove({}); // Clear everything :p
         console.log('removing everything');
     },
-    ttsWaiting: function() {
-        if (TTSReceived.find().count() === 0) {
-            TTSReceived.insert({status: 'waiting'});
-        } else {
-          TTSReceived.update({}, {status: 'waiting'});
-        }
-    }
+    setGlobalState: setGlobalState
 });
+
+var batchAccelsOutdated = function() {
+    var batchAccel = BatchAccels.findOne({}, {sort: {createdAt: -1}});
+    var accels = JSON.parse(batchAccel.accelsJson);
+    if (!accels || accels.length == 0) {
+        return true;
+    }
+    var latestTime = accels[accels.length - 1];
+    if (latestTime[3] < accels[accels.length - 1][3]) {
+        console.error('My assumption is wrong!');
+    }
+    console.log('delta', (new Date()).getTime() - latestTime[3]);
+    return (new Date()).getTime() - latestTime[3] > CHECK_INTERVAL;
+}
+
+var sendPushbullet = function(title, msg) {
+    var headers = {
+        'User-Agent':       'Super Agent/0.0.1',
+        'Content-Type':     'application/x-www-form-urlencoded'
+    }
+
+    // Configure the request
+    var options = {
+        url: 'http://pbullet.chaselambda.com/send',
+        method: 'POST',
+        headers: headers,
+        form: {title:title, message: msg}
+    }
+
+    // Start the request
+    request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log('Pbullet done!', body);
+        }
+    })
+};
 
 Meteor.startup(function () {
     Fiber = Npm.require('fibers');
-  if (BatchAccels.find().count() === 0) {
-      BatchAccels.insert({accelsJson: "[]"});
-  }
+    if (BatchAccels.find().count() === 0) {
+        BatchAccels.insert({accelsJson: "[]"});
+    }
     setInterval(function() {
-            Fiber(function() {
-                    if (getAccelsCount() > 20000) {
-                        BatchAccels.remove({});
-                        Alarms.remove({});
-                    }
-                }).run();
-        }, 1000);
+        Fiber(function() {
+                console.log('checking', getGlobalState('alarmSet'), getGlobalState('phoneMonitorOn'), batchAccelsOutdated());
+            if (getGlobalState('alarmSet') === true && batchAccelsOutdated()) {
+                if (getGlobalState('phoneMonitorOn') === true) {
+                    // TODO pushbullet notify
+                    sendPushbullet('Phone disconnected', 'Some problems over there');
+                    setGlobalState('phoneMonitorOn', false);
+                }
+                return;
+            }
+            if (getGlobalState('alarmSet') === true && !getGlobalState('phoneMonitorOn')) {
+                setGlobalState('phoneMonitorOn', true);
+            }
+
+            if (getAccelsCount() > 20000) {
+                BatchAccels.remove({});
+                Alarms.remove({});
+            }
+        }).run();
+    }, CHECK_INTERVAL);
 });
 
-Router.route('/task/:task', {where: 'server'})
-  .post(function () {
-        Tasks.insert({
-          text: this.params.task,
-          createdAt: new Date() // current time
+Router.route('/regid/:regid', {where: 'server'})
+    .post(function () {
+            // TODO mongo back this up
+            Regid.update({}, {'regid': this.params.regid});
+            console.log('regid is', this.params.regid);
+          this.response.end('done');
         });
-    this.response.end('post request ' + this.params.task + '\n');
-  });
+
+Router.route('/tts-received', {where: 'server'})
+    .post(function () {
+            // TODO mongo back this up
+            setGlobalState('TTSReceived', 'received');
+            this.response.end('done');
+        });
+
+Router.route('/triggerAlarm', {where: 'server'})
+    .post(function () {
+            console.log('trigger alarm called');
+            setGlobalState('alarmSet', false);
+            setGlobalState('phoneMonitorOn', false);
+            this.response.end('done');
+        });
+
+//Router.route('/hitter/:time', {where: 'server'})
+  //.post(function () {
+          //Hitters.insert({androidTime: this.params.time, createdAt: new Date()});
+          //this.response.end('done');
+    //});
+
+//Router.route('/multi_accels', {where: 'server'})
+  //.post(function () {
+      //if (AllAccels.find().count() === 0) {
+          //AllAccels.insert({xs: [], ys: [], zs: [], times: []});
+      //}
+      ////if (clearFlag) {
+          ////clearOldAccels();
+          ////clearFlag = false;
+      ////}
+      //console.log('request', this.request.body);
+      //var xs = [];
+      //var ys = [];
+      //var zs = [];
+      //var times = [];
+      //var points = this.request.body;
+      //for (var i = 0; i < points.length; i++) {
+          //xs.push(points[i][0]);
+          //ys.push(points[i][1]);
+          //zs.push(points[i][2]);
+          //times.push(new Date(points[i][3]));
+      //}
+      //AllAccels.update({}, {$pushAll: {xs: xs}});
+      //AllAccels.update({}, {$pushAll: {ys: ys}});
+      //AllAccels.update({}, {$pushAll: {zs: zs}});
+      //AllAccels.update({}, {$pushAll: {times: times}});
+      //this.response.end('got some request');
+  //});
+  //
+//Router.route('/task/:task', {where: 'server'})
+  //.post(function () {
+        //Tasks.insert({
+          //text: this.params.task,
+          //createdAt: new Date() // current time
+        //});
+    //this.response.end('post request ' + this.params.task + '\n');
+  //});
 
 //Router.route('/accels/:x/:y/:z', {where: 'server'})
   //.post(function () {
@@ -111,52 +221,3 @@ Router.route('/task/:task', {where: 'server'})
   //AllAccels.update({}, {$set: {ys: ys}});
   //AllAccels.update({}, {$set: {zs: zs}});
 //};
-
-Router.route('/regid/:regid', {where: 'server'})
-    .post(function () {
-            // TODO mongo back this up
-            Regid.update({}, {'regid': this.params.regid});
-            console.log('regid is', this.params.regid);
-          this.response.end('done');
-        });
-
-Router.route('/tts-received', {where: 'server'})
-    .post(function () {
-            // TODO mongo back this up
-            TTSReceived.update({}, {'status': 'received'});
-              this.response.end('done');
-        });
-
-Router.route('/hitter/:time', {where: 'server'})
-  .post(function () {
-          Hitters.insert({androidTime: this.params.time, createdAt: new Date()});
-          this.response.end('done');
-    });
-
-Router.route('/multi_accels', {where: 'server'})
-  .post(function () {
-      if (AllAccels.find().count() === 0) {
-          AllAccels.insert({xs: [], ys: [], zs: [], times: []});
-      }
-      //if (clearFlag) {
-          //clearOldAccels();
-          //clearFlag = false;
-      //}
-      console.log('request', this.request.body);
-      var xs = [];
-      var ys = [];
-      var zs = [];
-      var times = [];
-      var points = this.request.body;
-      for (var i = 0; i < points.length; i++) {
-          xs.push(points[i][0]);
-          ys.push(points[i][1]);
-          zs.push(points[i][2]);
-          times.push(new Date(points[i][3]));
-      }
-      AllAccels.update({}, {$pushAll: {xs: xs}});
-      AllAccels.update({}, {$pushAll: {ys: ys}});
-      AllAccels.update({}, {$pushAll: {zs: zs}});
-      AllAccels.update({}, {$pushAll: {times: times}});
-      this.response.end('got some request');
-  });

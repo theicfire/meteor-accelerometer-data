@@ -51,7 +51,9 @@
 <div>
 {{count}} data points.
 <button class='setClearFlag'>Clear old data</button>
-{{#if soundAlarmOn}}soundAlarmOn{{/if}}
+{{#if alarmSet}}alarmSet{{/if}}
+--
+{{#if phoneMonitorOn}}phoneMonitorOn{{/if}}
 </div>
 <audio id="alertAudio" src="alert.ogg" preload="auto"></audio>
 <div>

@@ -25,8 +25,8 @@ Template.Graph.helpers({
         // The one problem is the "initialization". We want to watch for changes on "alarmSet" and see
         // when it turns off, in which case we play the alarm song. But at the _start_, alarmSet
         // is false but we don't want to play the song.
-        phoneMonitorOn: function() {
-            return getGlobalState('phoneMonitorOn');
+        phoneConnected: function() {
+            return getGlobalState('phoneConnected');
         },
         graphDisplay: function() {
             if (Session.get('graphOn')) {
@@ -57,7 +57,6 @@ Template.Graph.events({
                 document.getElementById('alertAudio').pause();
                 document.getElementById('alertAudio').currentTime = 0;
                 Meteor.call('setGlobalState', 'alarmSet', true);
-                Meteor.call('setGlobalState', 'phoneMonitorOn', true);
             }
         },
         "click .ttsPretextButton": function (event) {
@@ -192,7 +191,7 @@ Template.Graph.created = function () {
         });
 
     Tracker.autorun(function() {
-            if (getGlobalState('alarmSet') && getGlobalState('phoneMonitorOn')) {
+            if (getGlobalState('alarmSet') && getGlobalState('phoneConnected')) {
                 alarmTriggered = false;
             } else if (!alarmTriggered) {
                 document.getElementById('alertAudio').play();

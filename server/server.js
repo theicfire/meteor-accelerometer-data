@@ -1,7 +1,6 @@
 var gcm = Meteor.npmRequire('node-gcm');
 var request = Meteor.npmRequire('request');
 var lastCount = -1;
-var CHECK_INTERVAL = 5000;
 
 var sendSomeMessage = function(msg) {
     var regid = Regid.findOne();
@@ -56,19 +55,18 @@ Meteor.methods({
     setGlobalState: setGlobalState
 });
 
-var batchAccelsOutdated = function() {
-    var batchAccel = BatchAccels.findOne({}, {sort: {createdAt: -1}});
-    var accels = JSON.parse(batchAccel.accelsJson);
-    if (!accels || accels.length == 0) {
-        return true;
+Meteor.onConnection(function (connection) {
+    if (connection.httpHeaders['user-agent'] === undefined) {
+        setGlobalState('phoneConnected', true);
+        connection.onClose(function() {
+            setGlobalState('phoneConnected', false);
+            console.log('phone closing', connection.clientAddress);
+            if (getGlobalState('alarmSet')) {
+                sendPushbullet('Phone disconnected', 'At ' + (new Date()).getTime());
+            }
+        });
     }
-    var latestTime = accels[accels.length - 1];
-    if (latestTime[3] < accels[accels.length - 1][3]) {
-        console.error('My assumption is wrong!');
-    }
-    console.log('delta', (new Date()).getTime() - latestTime[3]);
-    return (new Date()).getTime() - latestTime[3] > CHECK_INTERVAL;
-}
+});
 
 var sendPushbullet = function(title, msg) {
     var headers = {
@@ -99,25 +97,12 @@ Meteor.startup(function () {
     }
     setInterval(function() {
         Fiber(function() {
-                console.log('checking', getGlobalState('alarmSet'), getGlobalState('phoneMonitorOn'), batchAccelsOutdated());
-            if (getGlobalState('alarmSet') === true && batchAccelsOutdated()) {
-                if (getGlobalState('phoneMonitorOn') === true) {
-                    // TODO pushbullet notify
-                    sendPushbullet('Phone disconnected', 'Some problems over there');
-                    setGlobalState('phoneMonitorOn', false);
-                }
-                return;
-            }
-            if (getGlobalState('alarmSet') === true && !getGlobalState('phoneMonitorOn')) {
-                setGlobalState('phoneMonitorOn', true);
-            }
-
             if (getAccelsCount() > 20000) {
                 BatchAccels.remove({});
                 Alarms.remove({});
             }
         }).run();
-    }, CHECK_INTERVAL);
+    }, 2000);
 });
 
 Router.route('/regid/:regid', {where: 'server'})
@@ -139,7 +124,6 @@ Router.route('/triggerAlarm', {where: 'server'})
     .post(function () {
             console.log('trigger alarm called');
             setGlobalState('alarmSet', false);
-            setGlobalState('phoneMonitorOn', false);
             this.response.end('done');
         });
 

@@ -52,8 +52,6 @@
 {{count}} data points.
 <button class='setClearFlag'>Clear old data</button>
 {{#if alarmSet}}alarmSet{{/if}}
---
-{{#if phoneConnected}}phoneConnected{{/if}}
 </div>
 <audio id="alertAudio" src="alert.ogg" preload="auto"></audio>
 <div>
@@ -68,6 +66,12 @@ Preset TTS messsages:
 {{#each ttsPretextButtons}}
 <button class="ttsPretextButton">{{val}}</button>
 {{/each}}
+</div>
+<div>
+Phone Status:
+<button class="appStart">appStart</button>
+<button class="appStop">appStop</button>
+{{#if phoneConnected}}phoneConnected{{/if}}
 </div>
 
 <form class='ttsForm'>

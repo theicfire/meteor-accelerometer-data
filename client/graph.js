@@ -65,6 +65,13 @@ Template.Graph.events({
         },
         "change #graphOn": function (event) {
             Session.set('graphOn', event.target.checked);
+        },
+        'click .appStart': function () {
+            console.log('appstart called');
+            Meteor.call('sendPushbullet', 'appstart', '', 'nexus4bike');
+        },
+        'click .appStop': function () {
+            Meteor.call('sendPushbullet', 'appstop', '', 'nexus4bike');
         }
     });
 

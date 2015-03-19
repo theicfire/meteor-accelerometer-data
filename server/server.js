@@ -42,6 +42,32 @@ var setGlobalState = function(name, value) {
     console.log('is it waiting?', getGlobalState('TTSReceived'));
 };
 
+var sendPushbullet = function(title, msg, phone_nickname) {
+    console.log('sending pushbullet');
+    var headers = {
+        'User-Agent':       'Super Agent/0.0.1',
+        'Content-Type':     'application/x-www-form-urlencoded'
+    }
+
+    // Configure the request
+    var form_items = {title:title, message: msg};
+    if (phone_nickname !== undefined) {
+        form_items['phone_nickname'] = phone_nickname
+    }
+    var options = {
+        url: 'http://pbullet.chaselambda.com/send',
+        method: 'POST',
+        headers: headers,
+        form: form_items
+    }
+
+    // Start the request
+    request(options, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log('Pbullet done!', body);
+        }
+    })
+};
 
 Meteor.methods({
     sendMsg: function(msg) {
@@ -52,7 +78,8 @@ Meteor.methods({
         BatchAccels.remove({}); // Clear everything :p
         console.log('removing everything');
     },
-    setGlobalState: setGlobalState
+    setGlobalState: setGlobalState,
+    sendPushbullet: sendPushbullet
 });
 
 Meteor.onConnection(function (connection) {
@@ -68,27 +95,6 @@ Meteor.onConnection(function (connection) {
     }
 });
 
-var sendPushbullet = function(title, msg) {
-    var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
-    }
-
-    // Configure the request
-    var options = {
-        url: 'http://pbullet.chaselambda.com/send',
-        method: 'POST',
-        headers: headers,
-        form: {title:title, message: msg}
-    }
-
-    // Start the request
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log('Pbullet done!', body);
-        }
-    })
-};
 
 Meteor.startup(function () {
     Fiber = Npm.require('fibers');

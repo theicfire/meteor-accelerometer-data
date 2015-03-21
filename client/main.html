@@ -5,93 +5,42 @@
 <body>
 </body>
 
-<template name="TodoList">
-<header>
-  <h1>Todo List</h1>
-
-  <!-- add a form below the h1 -->
-  <form class="new-task">
-    <input type="text" name="text" placeholder="Type to add new tasks" />
-  </form>
-</header>
-  <div class="container">
-    <header>
-        <h1>Todo List ({{incompleteCount}})</h1>
-    <label class="hide-completed">
-      <input type="checkbox" checked="{{hideCompleted}}" />
-      Hide Completed Tasks
-    </label>
-    </header>
-
-    <ul>
-      {{#each tasks}}
-        {{> task}}
-      {{/each}}
-    </ul>
-  </div>
-</template>
-
-<template name="task">
-  <li class="{{#if checked}}checked{{/if}}">
-    <button class="delete">&times;</button>
-
-    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
-
-    <span class="text">{{text}}</span>
-  </li>
-</template>
-
-
-<template name="Vis">
-  <div id="circles"></div>
-</template>
-
-
 <template name="Graph">
-<div>
-{{count}} data points.
-<button class='setClearFlag'>Clear old data</button>
-{{#if alarmSet}}alarmSet{{/if}}
-</div>
-<audio id="alertAudio" src="alert.ogg" preload="auto"></audio>
-<div>
-Special message to phone:
-{{#each ttsButtons}}
-<button class="ttsButton">{{val}}</button>
-{{/each}}
-</div>
+    <div>
+    {{count}} data points.
+    <button class='setClearFlag'>Clear old data</button>
+    {{#if alarmSet}}alarmSet{{/if}}
+    </div>
+    <audio id="alertAudio" src="alert.ogg" preload="auto"></audio>
+    <div>
+    Special message to phone:
+    {{#each ttsButtons}}
+    <button class="ttsButton">{{val}}</button>
+    {{/each}}
+    </div>
 
-<div>
-Preset TTS messsages:
-{{#each ttsPretextButtons}}
-<button class="ttsPretextButton">{{val}}</button>
-{{/each}}
-</div>
-<div>
-Phone Status:
-<button class="appStart">appStart</button>
-<button class="appStop">appStop</button>
-{{#if phoneConnected}}phoneConnected{{/if}}
-</div>
+    <div>
+    Preset TTS messsages:
+    {{#each ttsPretextButtons}}
+    <button class="ttsPretextButton">{{val}}</button>
+    {{/each}}
+    </div>
+    <div>
+    Phone Status:
+    <button class="appStart">appStart</button>
+    <button class="appStop">appStop</button>
+    {{#if phoneConnected}}phoneConnected{{/if}}
+    </div>
 
-<form class='ttsForm'>
-<input type="text" placeholder="tts"/>
-{{#if ttsWaiting}}
-Waiting for TTS to process...
-{{/if}}
-</form>
-<div>
-    <input type="checkbox" id="graphOn" checked="{{graphOn}}">
-    Show the graph
-</div>
-<svg id="graph" style="{{graphDisplay}}"></svg>
-</template>
-
-
-<template name="Hitter">
-<div>{{count}} hits.</div>
-</template>
-
-<template name="HitHitter">
-Hitting!
+    <form class='ttsForm'>
+    <input type="text" placeholder="tts"/>
+    {{#if ttsWaiting}}
+    Waiting for TTS to process...
+    {{/if}}
+    </form>
+    <div>
+        <input type="checkbox" id="graphOn" checked="{{graphOn}}">
+        Show the graph
+    </div>
+    <svg id="graph" style="{{graphDisplay}}"></svg>
 </template>

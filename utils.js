@@ -8,7 +8,6 @@ getAccelsCount = function() {
       return lens.reduce(function (a, b) {return a + b})
 };
 
-
 getGlobalState = function(name) {
     var row = Other.findOne({name: name});
     if (!row) {

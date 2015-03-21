@@ -20,22 +20,17 @@ var sendAndroidMessage = function(msg) {
     var sender = new gcm.Sender('AIzaSyB7HbfqjrISHU3MDBr_7DQM-4BmdaLUoTw');
      
     // Add the registration IDs of the devices you want to send to 
-    var registrationIds = [];
-    registrationIds.push(regid.regid);
+    var registrationIds = [regid.regid];
      
-    // Send the message 
-    // ... trying only once 
-    console.log('now SENDING to', registrationIds);
-    sender.sendNoRetry(message, registrationIds, function(err, result) {
+    var retries = 5;
+    sender.send(message, registrationIds, 5, function(err, result) {
       if(err) console.error(err);
       else    console.log(result);
     });
 }
 
 var setGlobalState = function(name, value) {
-    console.log('setglobal', name, value);
     Other.upsert({name:name}, {name:name, value: value});
-    console.log('is it waiting?', getGlobalState('TTSReceived'));
 };
 
 var sendPushbullet = function(title, msg, phone_nickname) {

@@ -118,5 +118,15 @@ Router.route('/bluetooth/:state', {where: 'server'})
     .post(function () {
         console.log('bluetooth request of ', this.params.state);
         setGlobalState('bluetoothOn', this.params.state === 'on');
+        if (this.params.state !== 'on') {
+            Fiber = Npm.require('fibers');
+            setTimeout(function() {
+                Fiber(function() {
+                    if (!getGlobalState('bluetoothOn')) {
+                        sendPushbullet('Bluetooth disconnected', 'At ' + (new Date()).getTime());
+                    }
+                }).run()
+            }, 3000);
+        }
         this.response.end('done');
     });

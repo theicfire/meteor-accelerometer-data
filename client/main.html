@@ -27,10 +27,9 @@
     Phone Status:
     <button class="appStart">appStart</button>
     <button class="appStop">appStop</button>
-    <b>
-    {{#if alarmSet}}Alarm On{{else}}Alarm Off{{/if}}, 
-    {{#if phoneConnected}}Phone Connected{{else}}Phone Disconnected{{/if}}
-    </b>
+    <b>Alarm</b> {{#if alarmSet}}On{{else}}Off{{/if}},
+    <b>Phone</b> {{#if phoneConnected}}Connected{{else}}Disconnected{{/if}},
+    <b>Bluetooth</b> {{#if bluetoothOn}}ON{{else}}OFF{{/if}}
     </div>
 
     <form class='ttsForm'>

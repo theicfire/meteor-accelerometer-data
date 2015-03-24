@@ -113,3 +113,10 @@ Router.route('/triggerAlarm', {where: 'server'})
         setGlobalState('alarmSet', false);
         this.response.end('done');
     });
+
+Router.route('/bluetooth/:state', {where: 'server'})
+    .post(function () {
+        console.log('bluetooth request of ', this.params.state);
+        setGlobalState('bluetoothOn', this.params.state === 'on');
+        this.response.end('done');
+    });

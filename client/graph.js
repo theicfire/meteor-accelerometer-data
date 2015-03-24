@@ -32,6 +32,9 @@ Template.Graph.helpers({
                 return '';
             }
             return 'display:none';
+        },
+        bluetoothOn: function() {
+            return getGlobalState('bluetoothOn');
         }
     });
 

@@ -9,7 +9,7 @@ Template.Graph.helpers({
             return getGlobalState('TTSReceived') === 'waiting';
         },
         ttsButtons: function () {
-            return ['gps-off', 'gps-on', 'prod', 'debug', 'alarm-reset'].map(function (x) {return {val: x}});
+            return ['gps-off', 'gps-on', 'prod', 'debug', 'alarm-reset', 'bt-on', 'bt-off'].map(function (x) {return {val: x}});
         },
         ttsPretextButtons: function () {
             return ['Subject is walking',

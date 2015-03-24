@@ -8,19 +8,17 @@
 <template name="Graph">
     <div>
     {{count}} data points.
-    <button class='setClearFlag'>Clear old data</button>
-    {{#if alarmSet}}alarmSet{{/if}}
     </div>
     <audio id="alertAudio" src="alert.ogg" preload="auto"></audio>
     <div>
-    Special message to phone:
+    Special phone message:
     {{#each ttsButtons}}
     <button class="ttsButton">{{val}}</button>
     {{/each}}
     </div>
 
     <div>
-    Preset TTS messsages:
+    Prefilled TTS messsages:
     {{#each ttsPretextButtons}}
     <button class="ttsPretextButton">{{val}}</button>
     {{/each}}
@@ -29,7 +27,10 @@
     Phone Status:
     <button class="appStart">appStart</button>
     <button class="appStop">appStop</button>
-    {{#if phoneConnected}}phoneConnected{{/if}}
+    <b>
+    {{#if alarmSet}}Alarm On{{else}}Alarm Off{{/if}}, 
+    {{#if phoneConnected}}Phone Connected{{else}}Phone Disconnected{{/if}}
+    </b>
     </div>
 
     <form class='ttsForm'>

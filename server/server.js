@@ -61,14 +61,7 @@ var sendPushbullet = function(title, msg, phone_nickname) {
 };
 
 Meteor.methods({
-    sendMsg: function(msg) {
-        console.log('sending msg server', msg);
-        sendAndroidMessage(msg);
-    },
-    setClearFlag: function(msg) {
-        BatchAccels.remove({}); // Clear everything :p
-        console.log('removing everything');
-    },
+    sendAndroidMessage: sendAndroidMessage,
     setGlobalState: setGlobalState,
     sendPushbullet: sendPushbullet
 });

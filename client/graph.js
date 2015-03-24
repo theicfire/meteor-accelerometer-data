@@ -36,18 +36,15 @@ Template.Graph.helpers({
     });
 
 Template.Graph.events({
-        "click .setClearFlag": function (event) {
-            Meteor.call('setClearFlag');
-        },
         "submit .ttsForm": function (event) {
             event.preventDefault();
             Meteor.call('setGlobalState', 'TTSReceived', 'waiting');
-            Meteor.call('sendMsg', event.target.children[0].value);
+            Meteor.call('sendAndroidMessage', event.target.children[0].value);
             return false;
         },
         "click .ttsButton": function (event) {
             Meteor.call('setGlobalState', 'TTSReceived', 'waiting');
-            Meteor.call('sendMsg', event.target.innerHTML);
+            Meteor.call('sendAndroidMessage', event.target.innerHTML);
             if (event.target.innerHTML === 'alarm-reset') {
                 document.getElementById('alertAudio').pause();
                 document.getElementById('alertAudio').currentTime = 0;
@@ -55,7 +52,7 @@ Template.Graph.events({
             }
         },
         "click .ttsPretextButton": function (event) {
-            Meteor.call('sendMsg', event.target.innerHTML);
+            Meteor.call('sendAndroidMessage', event.target.innerHTML);
             Meteor.call('setGlobalState', 'TTSReceived', 'waiting');
         },
         "change #graphOn": function (event) {

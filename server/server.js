@@ -119,6 +119,7 @@ Router.route('/triggerAlarm', {where: 'server'})
     .post(function () {
         console.log('trigger alarm called');
         setGlobalState('alarmSet', false);
+        setGlobalState('alertAdminNum', getGlobalState('alertAdminNum') + 1);
         this.response.end('done');
     });
 

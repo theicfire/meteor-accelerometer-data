@@ -1,5 +1,5 @@
 Session.set('graphOn', false);
-var alarmTriggered = true;
+Session.set('alertAdminNum', undefined);
 
 Template.Graph.helpers({
         count: function () {
@@ -171,11 +171,11 @@ Template.Graph.created = function () {
     });
 
     Tracker.autorun(function() {
-        if (getGlobalState('alarmSet') && getGlobalState('phoneConnected')) {
-            alarmTriggered = false;
-        } else if (!alarmTriggered) {
-            document.getElementById('alertAudio').play();
-            alarmTriggered = true;
-        }
+            if (typeof(Session.get('alertAdminNum')) === 'number' &&
+                    typeof(getGlobalState('alertAdminNum')) === 'number' &&
+                    getGlobalState('alertAdminNum') !== Session.get('alertAdminNum')) {
+                document.getElementById('alertAudio').play();
+            }
+            Session.set('alertAdminNum', getGlobalState('alertAdminNum'));
     });
 }

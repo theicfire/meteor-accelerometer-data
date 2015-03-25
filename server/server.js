@@ -60,6 +60,11 @@ var sendPushbullet = function(title, msg, phone_nickname) {
     })
 };
 
+var alertAdmin = function(title, msg, phone_nickname) {
+    sendPushbullet(title, msg, phone_nickname);
+    setGlobalState('alertAdminNum', getGlobalState('alertAdminNum') + 1);
+};
+
 Meteor.methods({
     sendAndroidMessage: sendAndroidMessage,
     setGlobalState: setGlobalState,
@@ -73,7 +78,7 @@ Meteor.onConnection(function (connection) {
             setGlobalState('phoneConnected', false);
             console.log('phone closing', connection.clientAddress);
             if (getGlobalState('alarmSet')) {
-                sendPushbullet('Phone disconnected', 'At ' + (new Date()).getTime());
+                alertAdmin('Phone disconnected', 'At ' + (new Date()).getTime());
             }
         });
     }
@@ -81,6 +86,9 @@ Meteor.onConnection(function (connection) {
 
 Meteor.startup(function () {
     Fiber = Npm.require('fibers');
+    if (getGlobalState('alertAdminNum') === null) {
+        setGlobalState('alertAdminNum', 0);
+    }
     if (BatchAccels.find().count() === 0) {
         BatchAccels.insert({accelsJson: "[]"});
     }
@@ -123,7 +131,7 @@ Router.route('/bluetooth/:state', {where: 'server'})
             setTimeout(function() {
                 Fiber(function() {
                     if (!getGlobalState('bluetoothOn')) {
-                        sendPushbullet('Bluetooth disconnected', 'At ' + (new Date()).getTime());
+                        alertAdmin('Bluetooth disconnected', 'At ' + (new Date()).getTime());
                     }
                 }).run()
             }, 3000);

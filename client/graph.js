@@ -133,10 +133,10 @@ Template.Graph.created = function () {
             }
             console.log('now have', batchAccels);
 
-            var maxY = 40;// d3.max(BatchAccels, function (d) {return Math.max(d.x, d.y, d.z)});
-            var minY = -40; //d3.min(BatchAccels, function (d) {return Math.min(d.x, d.y, d.z)});
+            var maxY = 40;// d3.max(batchAccels, function (d) {return Math.max(d.x, d.y, d.z)});
+            var minY = -40; //d3.min(batchAccels, function (d) {return Math.min(d.x, d.y, d.z)});
 
-            x.domain(d3.extent(BatchAccels, function(d) { return d.createdAt; }));
+            x.domain(d3.extent(batchAccels, function(d) { return d.createdAt; }));
             y.domain([minY, maxY]);
 
             var svg = d3.select('svg g');
@@ -156,15 +156,15 @@ Template.Graph.created = function () {
                     .style("text-anchor", "end")
 
             svg.append("path")
-                .datum(BatchAccels)
+                .datum(batchAccels)
                 .attr("class", "lineX")
                 .attr("d", lineX);
             svg.append("path")
-                .datum(BatchAccels)
+                .datum(batchAccels)
                 .attr("class", "lineY")
                 .attr("d", lineY);
             svg.append("path")
-                .datum(BatchAccels)
+                .datum(batchAccels)
                 .attr("class", "lineZ")
                 .attr("d", lineZ);
         }

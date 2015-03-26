@@ -147,5 +147,7 @@ Router.route('/phonestart', {where: 'server'})
         setGlobalState('bluetoothOn', false);
         setGlobalState('lightsOn', false);
         setGlobalState('chainOn', false);
+        setGlobalState('prodOn', false);
+        setGlobalState('gpsOn', false);
         this.response.end('done');
     });

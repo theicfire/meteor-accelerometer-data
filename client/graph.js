@@ -15,7 +15,7 @@ Template.Graph.helpers({
             return ['Subject is walking',
                 'Subject is running',
                 'Hi, would you mind putting this bike upright?',
-                'Bike is being tampered with at the California Avenue cal train station. Authorities notified.'
+                'Bike is being tampered with at the Palo Alto cal train station. Authorities notified.'
             ].map(function (x) {return {val: x}});
         },
         alarmSet: function() {

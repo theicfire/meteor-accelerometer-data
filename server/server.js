@@ -123,11 +123,11 @@ Router.route('/triggerAlarm', {where: 'server'})
         this.response.end('done');
     });
 
-Router.route('/bluetooth/:state', {where: 'server'})
+Router.route('/setGlobalState/:key/:value', {where: 'server'})
     .post(function () {
-        console.log('bluetooth request of ', this.params.state);
-        setGlobalState('bluetoothOn', this.params.state === 'on');
-        if (this.params.state !== 'on') {
+        console.log('setGlobalState', this.params.key, this.params.value);
+        setGlobalState(this.params.key, this.params.value === 'true');
+        if (this.params.key === 'bluetoothOn' && this.params.value !== 'true') {
             Fiber = Npm.require('fibers');
             setTimeout(function() {
                 Fiber(function() {
@@ -136,20 +136,16 @@ Router.route('/bluetooth/:state', {where: 'server'})
                     }
                 }).run()
             }, 3000);
+
         }
         this.response.end('done');
     });
 
-Router.route('/lights/:state', {where: 'server'})
+Router.route('/phonestart', {where: 'server'})
     .post(function () {
-        console.log('lights request of ', this.params.state);
-        setGlobalState('lightsOn', this.params.state === 'on');
-        this.response.end('done');
-    });
-
-Router.route('/chain/:state', {where: 'server'})
-    .post(function () {
-        console.log('chain request of ', this.params.state);
-        setGlobalState('chainOn', this.params.state === 'on');
+        setGlobalState('alarmSet', false);
+        setGlobalState('bluetoothOn', false);
+        setGlobalState('lightsOn', false);
+        setGlobalState('chainOn', false);
         this.response.end('done');
     });

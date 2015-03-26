@@ -39,6 +39,12 @@ Template.Graph.helpers({
         lightsOn: function() {
             return getGlobalState('lightsOn');
         },
+        gpsOn: function() {
+            return getGlobalState('gpsOn');
+        },
+        prodOn: function() {
+            return getGlobalState('prodOn');
+        },
         chainOn: function() {
             return getGlobalState('chainOn');
         }

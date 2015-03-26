@@ -35,6 +35,9 @@ Template.Graph.helpers({
         },
         bluetoothOn: function() {
             return getGlobalState('bluetoothOn');
+        },
+        lightsOn: function() {
+            return getGlobalState('lightsOn');
         }
     });
 

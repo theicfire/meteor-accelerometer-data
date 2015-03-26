@@ -139,3 +139,10 @@ Router.route('/bluetooth/:state', {where: 'server'})
         }
         this.response.end('done');
     });
+
+Router.route('/lights/:state', {where: 'server'})
+    .post(function () {
+        console.log('lights request of ', this.params.state);
+        setGlobalState('lightsOn', this.params.state === 'on');
+        this.response.end('done');
+    });

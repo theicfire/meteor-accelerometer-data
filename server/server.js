@@ -146,3 +146,10 @@ Router.route('/lights/:state', {where: 'server'})
         setGlobalState('lightsOn', this.params.state === 'on');
         this.response.end('done');
     });
+
+Router.route('/chain/:state', {where: 'server'})
+    .post(function () {
+        console.log('chain request of ', this.params.state);
+        setGlobalState('chainOn', this.params.state === 'on');
+        this.response.end('done');
+    });

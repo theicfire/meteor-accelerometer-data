@@ -9,7 +9,7 @@ Template.Graph.helpers({
             return getGlobalState('TTSReceived') === 'waiting';
         },
         ttsButtons: function () {
-            return ['gps-off', 'gps-on', 'prod', 'debug', 'alarm-reset', 'bt-on', 'bt-off', 'lon', 'loff'].map(function (x) {return {val: x}});
+            return ['gps-off', 'gps-on', 'prod', 'debug', 'alarm-reset', 'bt-on', 'bt-off', 'lon', 'loff', 'chain-on'].map(function (x) {return {val: x}});
         },
         ttsPretextButtons: function () {
             return ['Subject is walking',
@@ -38,6 +38,9 @@ Template.Graph.helpers({
         },
         lightsOn: function() {
             return getGlobalState('lightsOn');
+        },
+        chainOn: function() {
+            return getGlobalState('chainOn');
         }
     });
 

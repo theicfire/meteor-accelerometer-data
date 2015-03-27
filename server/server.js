@@ -23,7 +23,8 @@ var sendAndroidMessage = function(msg) {
     });
      
     // Set up the sender with you API key 
-    var sender = new gcm.Sender('AIzaSyB7HbfqjrISHU3MDBr_7DQM-4BmdaLUoTw');
+    var sender = new gcm.Sender('AIzaSyAXxbxjgx5b38TrUZmxTvABixbReqzeqqs');
+
      
     // Add the registration IDs of the devices you want to send to 
     var registrationIds = [regid.regid];
@@ -89,6 +90,9 @@ Meteor.startup(function () {
     }
     if (BatchAccels.find().count() === 0) {
         BatchAccels.insert({accelsJson: "[]"});
+    }
+    if (Regid.find().count() === 0) {
+        Regid.insert({regid: ""});
     }
     setInterval(function() {
         Fiber(function() {

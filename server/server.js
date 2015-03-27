@@ -39,31 +39,23 @@ var setGlobalState = function(name, value) {
     Other.upsert({name:name}, {name:name, value: value});
 };
 
-var sendPushbullet = function(title, msg, phone_nickname) {
-    console.log('sending pushbullet');
-    var headers = {
-        'User-Agent':       'Super Agent/0.0.1',
-        'Content-Type':     'application/x-www-form-urlencoded'
-    }
-
-    // Configure the request
-    var form_items = {title:title, message: msg};
-    if (phone_nickname !== undefined) {
-        form_items['phone_nickname'] = phone_nickname
-    }
-    var options = {
-        url: 'http://pbullet.chaselambda.com/send',
-        method: 'POST',
-        headers: headers,
-        form: form_items
-    }
-
-    // Start the request
-    request(options, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log('Pbullet done!', body);
+var sendPushbullet = function(title, msg, phone_nickname, cb) {
+    pusher.devices(function(err, res) {
+        if (err) {
+            return;
         }
-    })
+        var params = {};
+        if (phone_nickname && phone_nickname.length > 0) {
+            var bikeId;
+            for (var i = 0; i < res.devices.length; i++) {
+                if (res.devices[i].nickname == phone_nickname) {
+                    params = {device_iden: res.devices[i].iden};
+                    break;
+                }
+            }
+        }
+        pusher.note(params, title, msg, cb);
+    });
 };
 
 var alertAdmin = function(title, msg, phone_nickname) {
@@ -147,12 +139,16 @@ Router.route('/setGlobalState/:key/:value', {where: 'server'})
         this.response.end('done');
     });
 
-Router.route('/pbullet/:title/:msg', {where: 'server'})
+Router.route('/pbullet/:title/:msg/:nickname?', {where: 'server'})
     .post(function () {
-        pusher.note({},this.params.title, this.params.msg, function(error, response) {
-                console.log('Finished sending pbullet', response, error);
+        var that = this;
+        sendPushbullet(this.params.title, this.params.msg, this.params.nickname, function(error, response) {
+            if (error) {
+                that.response.end('error');
+            } else {
+                that.response.end(JSON.stringify(response));
+            }
         });
-        this.response.end('done');
     });
 
 Router.route('/phonestart', {where: 'server'})

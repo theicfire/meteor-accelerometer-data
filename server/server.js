@@ -1,6 +1,12 @@
 var gcm = Meteor.npmRequire('node-gcm');
 var request = Meteor.npmRequire('request');
+var PushBullet = Meteor.npmRequire('pushbullet');
+var pusher = new PushBullet('oYHlSULc3i998hvbuVtsjlH0ps23l7y2');
 var lastCount = -1;
+
+
+
+
 
 var sendAndroidMessage = function(msg) {
     var regid = Regid.findOne();
@@ -138,6 +144,14 @@ Router.route('/setGlobalState/:key/:value', {where: 'server'})
             }, 3000);
 
         }
+        this.response.end('done');
+    });
+
+Router.route('/pbullet/:title/:msg', {where: 'server'})
+    .post(function () {
+        pusher.note({},this.params.title, this.params.msg, function(error, response) {
+                console.log('Finished sending pbullet', response, error);
+        });
         this.response.end('done');
     });
 

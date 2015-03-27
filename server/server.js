@@ -139,10 +139,10 @@ Router.route('/setGlobalState/:key/:value', {where: 'server'})
         this.response.end('done');
     });
 
-Router.route('/pbullet/:title/:msg/:nickname?', {where: 'server'})
+Router.route('/pbullet/:nickname?', {where: 'server'})
     .post(function () {
         var that = this;
-        sendPushbullet(this.params.title, this.params.msg, this.params.nickname, function(error, response) {
+        sendPushbullet(this.request.body.title, this.request.body.msg, this.params.nickname, function(error, response) {
             if (error) {
                 that.response.end('error');
             } else {

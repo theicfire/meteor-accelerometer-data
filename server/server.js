@@ -76,7 +76,7 @@ Meteor.onConnection(function (connection) {
         connection.onClose(function() {
             setGlobalState('phoneConnected', false);
             console.log('phone closing', connection.clientAddress);
-            if (getGlobalState('alarmSet') && getGlobalState('prod')) {
+            if (getGlobalState('alarmSet') && getGlobalState('prodOn')) {
                 alertAdmin('Phone disconnected', 'At ' + (new Date()).getTime());
             }
         });

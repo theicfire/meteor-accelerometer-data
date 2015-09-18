@@ -133,7 +133,7 @@ Router.route('/setGlobalState/:key/:value', {where: 'server'})
             Fiber = Npm.require('fibers');
             setTimeout(function() {
                 Fiber(function() {
-                    if (!getGlobalState('bluetoothOn')) {
+                    if (!getGlobalState('bluetoothOn') && getGlobalState('alarmSet') && getGlobalState('prodOn')) {
                         alertAdmin('Bluetooth disconnected', 'At ' + (new Date()).getTime());
                     }
                 }).run()

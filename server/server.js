@@ -23,7 +23,7 @@ var sendAndroidMessage = function(msg) {
     });
      
     // Set up the sender with you API key 
-    var sender = new gcm.Sender('AIzaSyAXxbxjgx5b38TrUZmxTvABixbReqzeqqs');
+    var sender = new gcm.Sender('AIzaSyB7HbfqjrISHU3MDBr_7DQM-4BmdaLUoTw');
 
      
     // Add the registration IDs of the devices you want to send to 

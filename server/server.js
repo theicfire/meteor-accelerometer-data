@@ -4,10 +4,6 @@ var PushBullet = Meteor.npmRequire('pushbullet');
 var pusher = new PushBullet('oYHlSULc3i998hvbuVtsjlH0ps23l7y2');
 var lastCount = -1;
 
-
-
-
-
 var sendAndroidMessage = function(msg) {
     var regid = Regid.findOne();
     if (!regid) {
@@ -129,17 +125,6 @@ Router.route('/setGlobalState/:key/:value', {where: 'server'})
     .post(function () {
         console.log('setGlobalState', this.params.key, this.params.value);
         setGlobalState(this.params.key, this.params.value === 'true');
-        if (this.params.key === 'bluetoothOn' && this.params.value !== 'true') {
-            Fiber = Npm.require('fibers');
-            setTimeout(function() {
-                Fiber(function() {
-                    if (!getGlobalState('bluetoothOn') && getGlobalState('alarmSet') && getGlobalState('prodOn')) {
-                        alertAdmin('Bluetooth disconnected', 'At ' + (new Date()).getTime());
-                    }
-                }).run()
-            }, 3000);
-
-        }
         this.response.end('done');
     });
 
@@ -158,9 +143,7 @@ Router.route('/pbullet/:nickname?', {where: 'server'})
 Router.route('/phonestart', {where: 'server'})
     .post(function () {
         setGlobalState('alarmSet', false);
-        setGlobalState('bluetoothOn', false);
-        setGlobalState('lightsOn', false);
-        setGlobalState('chainOn', false);
+        setGlobalState('autoSirenOn', false);
         setGlobalState('prodOn', false);
         setGlobalState('gpsOn', false);
         this.response.end('done');

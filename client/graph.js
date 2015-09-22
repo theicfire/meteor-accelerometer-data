@@ -15,21 +15,11 @@ Template.Graph.helpers({
                 'prod',
                 'debug',
                 'alarm-reset',
-                'bt-on',
-                'bt-off',
-                'lon',
-                'loff',
-                'chain-on',
-                'siren-short',
-                'siren-medium',
-                'siren-forever'].map(function (x) {return {val: x}});
+                'auto-siren-on',
+                'auto-siren-off'].map(function (x) {return {val: x}});
         },
         ttsPretextButtons: function () {
-            return ['Subject is walking',
-                'Subject is running',
-                'Hi, would you mind putting this bike upright?',
-                'Bike is being tampered with at the Palo Alto cal train station. Authorities notified.'
-            ].map(function (x) {return {val: x}});
+            return ['Hello there'].map(function (x) {return {val: x}});
         },
         alarmSet: function() {
             return getGlobalState('alarmSet');
@@ -46,20 +36,14 @@ Template.Graph.helpers({
             }
             return 'display:none';
         },
-        bluetoothOn: function() {
-            return getGlobalState('bluetoothOn');
-        },
-        lightsOn: function() {
-            return getGlobalState('lightsOn');
-        },
         gpsOn: function() {
             return getGlobalState('gpsOn');
         },
         prodOn: function() {
             return getGlobalState('prodOn');
         },
-        chainOn: function() {
-            return getGlobalState('chainOn');
+        autoSirenOn: function() {
+            return getGlobalState('autoSirenOn');
         }
     });
 

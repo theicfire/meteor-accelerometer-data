@@ -68,6 +68,7 @@ Meteor.methods({
 
 Meteor.onConnection(function (connection) {
     if (connection.httpHeaders['user-agent'] === undefined) {
+        BatchAccels.remove({});
         setGlobalState('phoneConnected', true);
         connection.onClose(function() {
             setGlobalState('phoneConnected', false);

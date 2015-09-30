@@ -72,7 +72,7 @@ Meteor.onConnection(function (connection) {
         connection.onClose(function() {
             setGlobalState('phoneConnected', false);
             console.log('phone closing', connection.clientAddress);
-            if (getGlobalState('alarmSet') && getGlobalState('prodOn')) {
+            if (getGlobalState('prodOn')) {
                 alertAdmin('Phone disconnected', 'At ' + (new Date()).getTime());
             }
         });
@@ -123,8 +123,11 @@ Router.route('/triggerAlarm', {where: 'server'})
 
 Router.route('/setGlobalState/:key/:value', {where: 'server'})
     .post(function () {
-        console.log('setGlobalState', this.params.key, this.params.value);
-        setGlobalState(this.params.key, this.params.value === 'true');
+        var value = this.params.value;
+        if (['gpsOn', 'prodOn', 'autoSirenOn', 'graphOn', 'phoneConnected', 'alarmSet'].indexOf(this.params.key) >= 0) {
+            value = this.params.value === 'true';
+        }
+        setGlobalState(this.params.key, value);
         this.response.end('done');
     });
 

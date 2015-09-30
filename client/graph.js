@@ -44,6 +44,9 @@ Template.Graph.helpers({
         },
         autoSirenOn: function() {
             return getGlobalState('autoSirenOn');
+        },
+        sensitivityLevel: function() {
+            return getGlobalState('sensitivityLevel');
         }
     });
 
